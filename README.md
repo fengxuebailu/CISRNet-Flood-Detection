@@ -1,6 +1,6 @@
 # CISRNet: Multi-modal Complementary Integration and Spectral Refinement for Optical-SAR Flood Detection
 
-This repository contains the official PyTorch implementation of **CISRNet**, a dual-stream encoder-single decoder architecture for optical-SAR fusion flood detection.
+This repository contains the PyTorch implementation of **CISRNet**, a dual-stream encoder-single decoder architecture for optical-SAR fusion flood detection.
 
 ## Architecture Overview
 
@@ -125,10 +125,10 @@ Training configuration can be modified in `config.py`:
 - Train/validation split: 80%/20% (random)
 
 **Outputs:**
-- Best model checkpoint: `./CISRNet/cCISR/{encoder}_{weights}_{name}_best.pt`
-- Last model checkpoint: `./CISRNet/cCISR/last_model.pt`
-- Training metrics CSV: `./CISRNet/mCISR.csv`
-- Visualization samples: `./CISRNet/jCISR/{epoch}.jpg`
+- Best model checkpoint: `./CISRNet/checkpoints/{encoder}_{weights}_{name}_best.pt`
+- Last model checkpoint: `./CISRNet/checkpoints/last_model.pt`
+- Training metrics CSV: `./CISRNet/training_logs.csv`
+- Visualization samples: `./CISRNet/training_visualizations/{epoch}.jpg`
 
 ## Testing / Evaluation
 
@@ -139,7 +139,7 @@ python test.py
 Before running, update `CHECKPOINT_PATH` in `test.py` to point to your trained model weights:
 
 ```python
-CHECKPOINT_PATH = "./CISRNet/cCISR/resnet101_imagenet_CISRNet_best.pt"
+CHECKPOINT_PATH = "./CISRNet/checkpoints/resnet101_imagenet_CISRNet_best.pt"
 ```
 
 The script outputs:
@@ -159,18 +159,6 @@ We adopt five standard metrics for evaluation:
 | Recall | Sensitivity / true positive rate for flood class |
 | F1 | Harmonic mean of Precision and Recall |
 | Kappa | Cohen's Kappa coefficient |
-
-## Citation
-
-If you find this work useful, please cite our paper:
-
-```bibtex
-@article{CISRNet2025,
-  title={CISRNet: Multi-modal Complementary Integration and Spectral Refinement for Optical-SAR Flood Detection},
-  author={Anonymous},
-  year={2025}
-}
-```
 
 ## License
 

@@ -73,7 +73,7 @@ except Exception as e:
     print(f"detail: {e}\n")
     exit()
 
-log_dir = os.path.join(basedir, "jCISR")
+log_dir = os.path.join(basedir, "training_visualizations")
 os.makedirs(log_dir, exist_ok=True)
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 

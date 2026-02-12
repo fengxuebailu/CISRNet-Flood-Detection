@@ -39,8 +39,8 @@ OPTICAL_DIR = "/train/opt"
 RADAR_DIR = "/train/vv"
 LABEL_DIR = "/train/flood_vv"
 # Checkpoint and metrics output
-CHECKPOINT_DIR = os.path.join(basedir, 'cCISR')
-METRICS_CSV = os.path.join(basedir, 'mCISR.csv')
+CHECKPOINT_DIR = os.path.join(basedir, 'checkpoints')
+METRICS_CSV = os.path.join(basedir, 'training_logs.csv')
 os.makedirs(CHECKPOINT_DIR, exist_ok=True)
 
 
