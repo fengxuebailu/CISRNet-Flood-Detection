@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pt
+*.pth
+*.jpg
+*.png
+*.csv
+CISRNet/
+.DS_Store
