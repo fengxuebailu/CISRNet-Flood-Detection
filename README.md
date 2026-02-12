@@ -14,19 +14,6 @@ CISRNet adopts a dual-stream encoder and single-stream decoder architecture, des
 
 - **SRB (Spectral Refinement Block)**: Counteracts the spectral bias of deep fusion architectures by leveraging the orthogonal decomposition property of the Discrete Wavelet Transform (DWT). Disentangles features into frequency-specific components for targeted restoration of high-frequency boundary details via learnable Frequency MLP.
 
-## File Structure
-
-```
-CISRNet.py      # Network architecture (all modules)
-config.py       # Training configuration and hyperparameters
-dataloader.py   # Dataset class and data loading pipeline
-train.py        # Training script
-test.py         # Standalone evaluation/inference script
-util.py         # Training and evaluation utility functions
-loss.py         # Custom loss function definitions
-evaluate.py     # Additional metric calculation functions
-```
-
 ## Requirements
 
 - Python >= 3.8
@@ -100,19 +87,6 @@ Training configuration can be modified in `config.py`:
 | `height, width` | 256, 256 | Input image size |
 | `ratio` | 0.5 | Binary prediction threshold |
 
-**Implementation details:**
-- Optimizer: SGD (momentum=0.9, weight_decay=1e-4)
-- Scheduler: CosineAnnealingLR (eta_min=1e-6)
-- Loss: Soft Dice Loss + BCEWithLogitsLoss
-- Data augmentation: horizontal flip, vertical flip
-- Train/validation split: 80%/20% (random)
-
-**Outputs:**
-- Best model checkpoint: `./CISRNet/checkpoints/{encoder}_{weights}_{name}_best.pt`
-- Last model checkpoint: `./CISRNet/checkpoints/last_model.pt`
-- Training metrics CSV: `./CISRNet/training_logs.csv`
-- Visualization samples: `./CISRNet/training_visualizations/{epoch}.jpg`
-
 ## Testing / Evaluation
 
 ```bash
@@ -143,6 +117,4 @@ We adopt five standard metrics for evaluation:
 | F1 | Harmonic mean of Precision and Recall |
 | Kappa | Cohen's Kappa coefficient |
 
-## License
-
-This project is released under the [MIT License](LICENSE).
+## 
