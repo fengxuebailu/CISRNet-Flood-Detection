@@ -20,7 +20,7 @@ from util import *
 from sklearn.model_selection import train_test_split
 import torch.optim.lr_scheduler as lr_scheduler
 import shutil
-from dataloaded import *
+from dataloader import *
 from CISRNet import *
 import pandas as pd
 

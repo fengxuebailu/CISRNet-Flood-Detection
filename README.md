@@ -14,29 +14,12 @@ CISRNet adopts a dual-stream encoder and single-stream decoder architecture, des
 
 - **SRB (Spectral Refinement Block)**: Counteracts the spectral bias of deep fusion architectures by leveraging the orthogonal decomposition property of the Discrete Wavelet Transform (DWT). Disentangles features into frequency-specific components for targeted restoration of high-frequency boundary details via learnable Frequency MLP.
 
-```
-Input: 5ch (4ch Optical + 1ch SAR)
-  |-- split -->
-  |   Optical Encoder (ResNet50, 4ch) --> Side Conv x5 --> [64ch features x5]
-  |   SAR Encoder (ResNet50, 1ch)     --> Side Conv x5 --> [64ch features x5]
-  |                                                    |
-  |                                      FCM x5 (cross-modal recalibration)
-  |                                                    |
-  |                                      RFI x5 (dual-branch fusion)
-  |                                                    |
-  |                              Decoder (CAB alignment + CEB channel attention)
-  |                                                    |
-  |                                    SRB (frequency-domain refinement)
-  |                                                    |
-  |                                  SegmentationHead --> Binary flood map
-```
-
 ## File Structure
 
 ```
 CISRNet.py      # Network architecture (all modules)
 config.py       # Training configuration and hyperparameters
-dataloaded.py   # Dataset class and data loading pipeline
+dataloader.py   # Dataset class and data loading pipeline
 train.py        # Training script
 test.py         # Standalone evaluation/inference script
 util.py         # Training and evaluation utility functions

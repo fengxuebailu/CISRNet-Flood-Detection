@@ -15,7 +15,7 @@ util.sample_num = 0
 
 from util import eval_fn 
 from CISRNet import CISRNet
-from dataloaded import CustomDataset 
+from dataloader import CustomDataset 
 from config import DEVICE, height, width
 
 
