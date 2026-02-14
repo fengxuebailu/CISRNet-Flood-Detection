@@ -20,7 +20,7 @@ from util import *
 from sklearn.model_selection import train_test_split
 import torch.optim.lr_scheduler as lr_scheduler
 import shutil
-from dataloader import *
+from dataloaded import *
 from CISRNet import *
 import pandas as pd
 
@@ -44,9 +44,9 @@ optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9, weight_deca
 scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=1e-6)
 print(f"Scheduler: CosineAnnealingLR (T_max={EPOCHS}, eta_min=1e-6)")
 
-TEST_OPT_DIR = "/test/opt"
-TEST_SAR_DIR = "/test/vv"
-TEST_LBL_DIR = "/test/flood_vv"
+TEST_OPT_DIR = "/path/to/test/opt"
+TEST_SAR_DIR = "/path/to/test/vv"
+TEST_LBL_DIR = "/path/to/test/flood_vv"
 
 print(f"Loading Test Dataset from: {TEST_OPT_DIR}")
 
@@ -69,8 +69,8 @@ try:
     print(f"✅ Test Loader Ready. Found {len(test_dataset)} samples.")
 
 except Exception as e:
-    print(f"\n❌ error")
-    print(f"detail: {e}\n")
+    print(f"\n❌ Error")
+    print(f"Detail: {e}\n")
     exit()
 
 log_dir = os.path.join(basedir, "training_visualizations")

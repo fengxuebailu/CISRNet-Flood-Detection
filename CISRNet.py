@@ -1,85 +1,9 @@
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from functools import partial
 from segmentation_models_pytorch.losses import DiceLoss
-# RCB (Residual Convolution Block)
-
-class RES_Dilated_Conv(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(RES_Dilated_Conv,self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding="same", bias=False) #dilation=1
-        self.conv2 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding="same", dilation=2, bias=False) #dilation=2
-        self.conv3 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding="same", dilation=3, bias=False) #dilation=3
-        self.conv4 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding="same", bias=False) #dilation=1
-        
-        self.shortcut = nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False) if in_channels != out_channels else nn.Identity()
-        
-        self.bn1 = nn.BatchNorm2d(out_channels)
-        self.bn2 = nn.BatchNorm2d(out_channels)
-        self.bn3 = nn.BatchNorm2d(out_channels)
-        self.bn4 = nn.BatchNorm2d(out_channels)
-
-    def forward(self, x):
-        x1 = self.conv1(x)
-        x1 = self.bn1(x1) 
-        x1 = F.gelu(x1) 
-        x1 = F.dropout(x1, p=0.1) 
-
-        x2 = self.conv2(x)
-        x2 = self.bn2(x2)
-        x2 = F.gelu(x2)
-        x2 = F.dropout(x2, p=0.1)
-
-        x3 = self.conv3(x)
-        x3 = self.bn3(x3)
-        x3 = F.gelu(x3)
-        x3 = F.dropout(x3, p=0.1)
-
-        added = torch.add(x1, x2)
-        added = torch.add(added, x3)
-
-        x_out = self.conv4(added)
-        x_out = self.bn4(x_out)
-        x_out = F.gelu(x_out)
-        x_out = F.dropout(x_out, p=0.1)
-
-        residual = self.shortcut(x)  # Either identity or 1x1 conv
-        x_out += residual  # Residual connection
-        return x_out
-
-
-class RS_Dblock(nn.Module):
-    def __init__(self, channel):
-        super(RS_Dblock, self).__init__()
-        self.dilate1 = nn.Conv2d(channel, channel, kernel_size=3, dilation=1, padding=1, bias=False)
-        self.dilate2 = nn.Conv2d(channel, channel, kernel_size=3, dilation=2, padding=2, bias=False)
-        self.dilate3 = nn.Conv2d(channel, channel, kernel_size=3, dilation=4, padding=4, bias=False)
-        self.dilate4 = nn.Conv2d(channel, channel, kernel_size=3, dilation=8, padding=8, bias=False)
-
-        self.act = nn.ReLU(inplace=True)
-        self.dropout = nn.Dropout(0.1) 
-
-    def forward(self, x):
-        dilate1_out = self.act(self.dilate1(x))
-        dilate1_out = self.dropout(dilate1_out)
-        dilate1_out += x 
-
-        dilate2_out = self.act(self.dilate2(dilate1_out))
-        dilate2_out = self.dropout(dilate2_out)
-        dilate2_out += dilate1_out  
-
-        dilate3_out = self.act(self.dilate3(dilate2_out))
-        dilate3_out = self.dropout(dilate3_out)
-        dilate3_out += dilate2_out  
-
-        dilate4_out = self.act(self.dilate4(dilate3_out))
-        dilate4_out = self.dropout(dilate4_out)
-        dilate4_out += dilate3_out  
-
-        out = x + dilate4_out
-        return out
-
 
 class Upsample(nn.Module):
 
@@ -486,25 +410,22 @@ class CCDC(nn.Module):
         )
 
 
-        # bridge module (center block)
-        if center_block == 'dblock':
-            self.center_opt = RS_Dblock(enc_opt_dims[-1])
-            self.center_sar = RS_Dblock(enc_sar_dims[-1])
-        else:
-            self.center_opt = nn.Identity()
-            self.center_sar = nn.Identity()
+        # bridge module: use identity (remove RS_Dblock usage)
+        self.center_opt = nn.Identity()
+        self.center_sar = nn.Identity()
 
-        self.side1_rgb = RES_Dilated_Conv(enc_opt_dims[0], side_dim)
-        self.side2_rgb = RES_Dilated_Conv(enc_opt_dims[1], side_dim)
-        self.side3_rgb = RES_Dilated_Conv(enc_opt_dims[2], side_dim)
-        self.side4_rgb = RES_Dilated_Conv(enc_opt_dims[3], side_dim)
-        self.side5_rgb = RES_Dilated_Conv(enc_opt_dims[4], side_dim)
+        # side feature projection: replace RES_Dilated_Conv with simple ConvModule
+        self.side1_rgb = ConvModule(enc_opt_dims[0], side_dim, kernel_size=3)
+        self.side2_rgb = ConvModule(enc_opt_dims[1], side_dim, kernel_size=3)
+        self.side3_rgb = ConvModule(enc_opt_dims[2], side_dim, kernel_size=3)
+        self.side4_rgb = ConvModule(enc_opt_dims[3], side_dim, kernel_size=3)
+        self.side5_rgb = ConvModule(enc_opt_dims[4], side_dim, kernel_size=3)
 
-        self.side1_sar = RES_Dilated_Conv(enc_sar_dims[0], side_dim)
-        self.side2_sar = RES_Dilated_Conv(enc_sar_dims[1], side_dim)
-        self.side3_sar = RES_Dilated_Conv(enc_sar_dims[2], side_dim)
-        self.side4_sar = RES_Dilated_Conv(enc_sar_dims[3], side_dim)
-        self.side5_sar = RES_Dilated_Conv(enc_sar_dims[4], side_dim)
+        self.side1_sar = ConvModule(enc_sar_dims[0], side_dim, kernel_size=3)
+        self.side2_sar = ConvModule(enc_sar_dims[1], side_dim, kernel_size=3)
+        self.side3_sar = ConvModule(enc_sar_dims[2], side_dim, kernel_size=3)
+        self.side4_sar = ConvModule(enc_sar_dims[3], side_dim, kernel_size=3)
+        self.side5_sar = ConvModule(enc_sar_dims[4], side_dim, kernel_size=3)
 
         # FCM: Feature Complementary Module at each scale
         self.fcm1 = FCM(side_dim)

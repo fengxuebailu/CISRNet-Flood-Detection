@@ -27,11 +27,12 @@ CISRNet adopts a dual-stream encoder and single-stream decoder architecture, des
 - Pillow
 - tqdm
 - pandas
+- thop
 
 Install dependencies:
 
 ```bash
-pip install torch torchvision segmentation-models-pytorch albumentations scikit-learn numpy matplotlib opencv-python Pillow tqdm pandas
+pip install torch torchvision segmentation-models-pytorch albumentations scikit-learn numpy matplotlib opencv-python Pillow tqdm pandas thop
 ```
 
 ## Dataset Preparation
@@ -80,7 +81,7 @@ python train.py
 Training configuration can be modified in `config.py`:
 
 | Parameter | Default | Description |
-|:---|:---|:---|
+|:---|:---|:-5|
 | `EPOCHS` | 100 | Number of training epochs |
 | `BATCH_SIZE` | 16 | Training batch size |
 | `LR` | 0.01 | Initial learning rate |

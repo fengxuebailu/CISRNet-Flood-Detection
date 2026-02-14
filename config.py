@@ -1,6 +1,6 @@
 import os
 DEVICE='cuda'
-EPOCHS=100
+EPOCHS=50
 BATCH_SIZE=16
 LR=0.01
 ratio=0.5 
@@ -35,9 +35,9 @@ for file in glob.glob('./*.py'):
     shutil.copyfile(file,basedir+'/'+'code/'+os.path.basename(file))
 
 # --- Dataset and workspace paths (override before training if needed) ---
-OPTICAL_DIR = "/train/opt"
-RADAR_DIR = "/train/vv"
-LABEL_DIR = "/train/flood_vv"
+OPTICAL_DIR = "/path/to/train/opt"
+RADAR_DIR = "/path/to/train/vv"
+LABEL_DIR = "/path/to/train/flood_vv"
 # Checkpoint and metrics output
 CHECKPOINT_DIR = os.path.join(basedir, 'checkpoints')
 METRICS_CSV = os.path.join(basedir, 'training_logs.csv')
